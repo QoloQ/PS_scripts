@@ -1,29 +1,38 @@
 param(
 	[string]$url = $(throw "-url required"),
-	[string]$ping = $(throw "-ping required"),
-	[string]$metoda_aut = $(throw "-metoda_aut required"),
+	[string]$module = $(throw "-module required"),
 	
-	[Parameter(Mandatory=$True)]
-	[int]$klient_id,
+	[Parameter(Mandatory=$False)]
+	[string]$klient_id = "sugar",
 
-	[Parameter(Mandatory=$True)]
-	[string]$jmeno,
+	[Parameter(Mandatory=$False)]
+	[string]$jmeno = "jchmelarapi",
 
-	[string]$heslo = (Read-Host -AsSecureString "password:")
+	[string]$heslo = (Read-Host -AsSecureString "password:") 
+	
+) 
 
-)
 
-$data = '{
-"grant_type":"password", 
-"client_id":' + $klient_id + ', 
-"client_secret":"", 
-"username":' + $jmeno + ', 
-"password":' + $heslo + ', 
-"platform":"base"
-}'
+<#
+[string]$klient_id = "sugar"
+[string]$jmeno = "jchmelarapi" #>
+[string]$heslo = "8iMGYRM7A7eb8P" 
 
-$tok = curl --request POST --url $url+$metoda_autentizace --header "Cache-Control:no-cache" --header "Content-Type: application/json" --header "Accept: application/json" --data $data | ConvertFrom-Json | select -P access_token 
+##$heslo = ConvertFrom-SecureString $heslo
 
-"testin token now..."
+$dataa = '"{\"grant_type\":\"password\",
+ \"client_id\":\"'+ $klient_id+'\",
+  \"client_secret\":\"\",
+  \"username\":\"'+ $jmeno+'\",
+  \"password\":\"'+$heslo+'\",
+  \"platform\":\"base\"}"'
 
-curl -s -X GET -H OAuth-Token:$tok $url+$ping
+$finurl = $url + $module
+
+
+
+$token= (curl --request POST --url $finurl --header "Cache-Control:no-cache" --header "Content-Type: application/json" --header "Accept: application/json" --data $dataa | convertfrom-json | select -Property access_token).access_token
+
+$tokk = $token.access_token
+$resp = curl -X GET -H OAuth-Token:$token https://dsugar.kapitol.cz/rest/v11/ping
+$resp
