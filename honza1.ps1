@@ -1,6 +1,5 @@
 param(
 	[string]$url = $(throw "-url required"),
-
 	[string]$module = $(throw "-module required"),
 	
 	[Parameter(Mandatory=$False)]
@@ -9,27 +8,26 @@ param(
 	[Parameter(Mandatory=$False)]
 	[string]$jmeno = "jchmelarapi",
 
-	[Parameter(Mandatory=$False)]
 	[string]$heslo = (Read-Host -AsSecureString "password:") 
 	
 ) 
 
-$heslo
-$pass = convertfrom-securestring $heslo.heslo
-$pass
 
+<#
+[string]$klient_id = "sugar"
+[string]$jmeno = "jchmelarapi" #>
+[string]$heslo = "8iMGYRM7A7eb8P" 
 
+##$heslo = ConvertFrom-SecureString $heslo
 
 $dataa = '"{\"grant_type\":\"password\",
  \"client_id\":\"'+ $klient_id+'\",
   \"client_secret\":\"\",
   \"username\":\"'+ $jmeno+'\",
-  \"password\":\"'+$heslo_sec+'\",
+  \"password\":\"'+$heslo+'\",
   \"platform\":\"base\"}"'
 
 $finurl = $url + $module
-
-
 
 
 
@@ -37,5 +35,4 @@ $token= (curl --request POST --url $finurl --header "Cache-Control:no-cache" --h
 
 $tokk = $token.access_token
 $resp = curl -X GET -H OAuth-Token:$token https://dsugar.kapitol.cz/rest/v11/ping
-
 $resp
