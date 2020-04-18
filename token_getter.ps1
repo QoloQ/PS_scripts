@@ -6,7 +6,8 @@
 
 
 param(
-	[string]$url = $(throw "-url required"),
+	[Parameter(Mandatory=$False)]
+	[string]$url,
 
 	[string]$module = $(throw "-module required"),
 	
@@ -14,10 +15,12 @@ param(
 	[string]$klient_id = "sugar",
 
 	[Parameter(Mandatory=$False)]
-	[string]$jmeno = "jchmelarapi",
+	[string]$jmeno = "user",
 
 	[Security.SecureString]$heslo = (Read-Host -AsSecureString "password:") 
 	) 
+
+$url = get-content .\token_getter_params.txt
 
 
 "converting from ss...."
@@ -30,7 +33,7 @@ $data = '"{\"grant_type\":\"password\",
  \"client_id\":\"'+ $klient_id+'\",
   \"client_secret\":\"\",
   \"username\":\"'+ $jmeno+'\",
-  \"password\":\"'+$heslo_sec+'\",
+  \"password\":\"'+$pass+'\",
   \"platform\":\"base\"}"'
 
 $finurl = $url + $module
@@ -43,4 +46,4 @@ $token= (curl --request POST --url $finurl --header "Cache-Control:no-cache" --h
 
 $resp = curl -X GET -H OAuth-Token:$token https://dsugar.kapitol.cz/rest/v11/ping
 
-
+$resp
