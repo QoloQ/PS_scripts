@@ -1,0 +1,1 @@
+https://dsugar.kapitol.cz/rest/v11/ping
